@@ -6,6 +6,129 @@
 	<meta name="description" content="민연제 포트폴리오">
 	<meta name="keywords" content="프로그래밍, 디자인">
 	<link rel="stylesheet" href="C:/Users/user/Desktop/style.css">
+	<style>
+      #snowflakeContainer {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        display: none;
+      }
+
+      .snowflake {
+        position: fixed;
+        /*background-color: #ccc;*/
+        background-color: rgb(255, 250, 176);
+        user-select: none;
+        z-index: 1000;
+        pointer-events: none;
+        border-radius: 50%;
+        width: 15px;
+        height: 15px;
+      }
+    </style>
+    <script>
+      var snowflakes = [];
+      var browserWidth;
+      var browserHeight;
+      var numberOfSnowflakes = 500;
+
+      window.addEventListener("DOMContentLoaded", generateSnowflakes, false);
+
+      // Make snowflakes
+      function Snowflake(element, speed, xPos, yPos) {
+        // set initial snowflake properties
+        this.element = element;
+        this.speed = speed;
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.scale = 1;
+
+        // declare variables used for snowflake's motion
+        this.counter = 0;
+        this.sign = Math.random() < 0.5 ? 1 : -1;
+
+        // setting an initial opacity and size for our snowflake
+        this.element.style.opacity = (0.1 + Math.random()) / 3;
+      }
+
+      // The function responsible for actually moving our snowflake
+      Snowflake.prototype.move = function() {
+        this.counter += this.speed / 5000;
+        this.xPos += (this.sign * this.speed * Math.cos(this.counter)) / 40;
+        this.yPos += Math.sin(this.counter) / 40 + this.speed / 15;
+        this.scale = 0.5 + Math.abs((10 * Math.cos(this.counter)) / 15);
+
+        // setting our snowflake's position
+        setTransform(
+          Math.round(this.xPos),
+          Math.round(this.yPos),
+          this.scale,
+          this.element
+        );
+
+        // if snowflake goes below the browser window, move it back to the top
+        if (this.yPos > browserHeight) {
+          this.yPos = -50;
+        }
+      };
+
+      // A performant way to set your snowflake's position and size
+      function setTransform(xPos, yPos, scale, el) {
+        el.style.transform = `translate(${xPos}px, ${yPos}px) scale(${scale}, ${scale})`;
+      }
+
+      // The function responsible for creating the snowflake
+      function generateSnowflakes() {
+        var originalSnowflake = document.querySelector(".snowflake");
+
+        // access our snowflake element's parent container
+        var snowflakeContainer = originalSnowflake.parentNode;
+        snowflakeContainer.style.display = "block";
+
+        // get our browser's size
+        browserWidth = document.documentElement.clientWidth;
+        browserHeight = document.documentElement.clientHeight;
+
+        // create each individual snowflake
+        for (var i = 0; i < numberOfSnowflakes; i++) {
+          var snowflakeClone = originalSnowflake.cloneNode(true);
+          snowflakeContainer.appendChild(snowflakeClone);
+
+          // set our snowflake's initial position and related properties
+          var initialXPos = getPosition(50, browserWidth);
+          var initialYPos = getPosition(50, browserHeight);
+          var speed = 5 + Math.random() * 40;
+
+          // create our Snowflake object
+          var snowflakeObject = new Snowflake(
+            snowflakeClone,
+            speed,
+            initialXPos,
+            initialYPos
+          );
+          snowflakes.push(snowflakeObject);
+        }
+
+        // remove the original snowflake because we no longer need it visible
+        snowflakeContainer.removeChild(originalSnowflake);
+
+        moveSnowflakes();
+      }
+
+      function moveSnowflakes() {
+        for (var i = 0; i < snowflakes.length; i++) {
+          var snowflake = snowflakes[i];
+          snowflake.move();
+        }
+
+        requestAnimationFrame(moveSnowflakes);
+      }
+
+      // This function returns a number between (maximum - offset) and (maximum + offset)
+      function getPosition(offset, size) {
+        return Math.round(-1 * offset + Math.random() * (size + 2 * offset));
+      }
+    </script>
 </head>
 <body>
 	<!-- Main section start -->
