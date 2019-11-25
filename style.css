@@ -227,13 +227,13 @@ ol {
 
 .copyright {
 	font-size: 13px;
-	color:　black;
+	color:white;
 	position: fixed;
 	height: 80px;
 	width: 614px;
 	left: 0;
 	bottom: 0;
-	background: #fff;
+	background: midnightblue;
 	padding-left: 145px;
 	padding-top: 20px;
 }
